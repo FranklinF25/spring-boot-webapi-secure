@@ -20,6 +20,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/login").permitAll()
                         .requestMatchers("/api/comments/preview").permitAll()
+                        // Container health probes need unauthenticated access
+                        .requestMatchers("/actuator/health").permitAll()
                         .anyRequest().authenticated())
                 .build();
     }
