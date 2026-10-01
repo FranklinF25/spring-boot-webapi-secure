@@ -5,15 +5,22 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 
+import static org.springframework.security.config.Customizer.withDefaults;
+
 @Configuration
 public class SecurityConfig {
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        // LAB: configuracion deliberadamente permisiva para analizar control de acceso y CSRF.
+        // Public endpoints: the login endpoint and the comment preview used by the lab.
+        // Everything else requires HTTP Basic authentication.
         return http
                 .csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
+                .httpBasic(withDefaults())
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/auth/login").permitAll()
+                        .requestMatchers("/api/comments/preview").permitAll()
+                        .anyRequest().authenticated())
                 .build();
     }
 }

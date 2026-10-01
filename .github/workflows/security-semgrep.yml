@@ -1,10 +1,7 @@
 name: Security - Semgrep
 
+# Manual Semgrep run: CI workflows already scan every push/PR.
 on:
-  push:
-    branches: [feature/**', 'bugfix/**', 'hotfix/**']
-  pull_request:
-    branches: [main, develop]
   workflow_dispatch:
 
 permissions:
@@ -12,17 +9,17 @@ permissions:
 
 jobs:
   semgrep:
-    name: SAST con Semgrep
+    name: SAST - Semgrep (manual)
     runs-on: ubuntu-latest
 
     container:
-      image: semgrep/semgrep
+      image: semgrep/semgrep:latest
 
     steps:
-      - name: Descargar repositorio
-        uses: actions/checkout@v6
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - name: Ejecutar Semgrep
+      - name: Run Semgrep
         run: |
           semgrep scan \
             --config auto \
@@ -32,7 +29,7 @@ jobs:
             --sarif-output=semgrep-results.sarif \
             src/main/java
 
-      - name: Publicar reportes de Semgrep
+      - name: Upload Semgrep reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
