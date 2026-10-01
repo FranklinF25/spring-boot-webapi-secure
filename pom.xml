@@ -7,7 +7,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.14</version>
+        <version>3.5.16</version>
         <relativePath/>
     </parent>
 
@@ -19,6 +19,9 @@
 
     <properties>
         <java.version>21</java.version>
+        <!-- Latest Tomcat 10.1.x patch: clears embedded-container CVEs
+             flagged by dependency-check in the managed 10.1.55. -->
+        <tomcat.version>10.1.60</tomcat.version>
     </properties>
 
     <dependencies>
@@ -42,13 +45,6 @@
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <scope>runtime</scope>
-        </dependency>
-
-        <!-- Dependencia desactualizada agregada solo para el laboratorio SCA. -->
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-text</artifactId>
-            <version>1.9</version>
         </dependency>
 
         <dependency>
@@ -100,6 +96,11 @@
                          reads the JSON report and decides (scanner reports,
                          gate decides). -->
                     <failBuildOnCVSS>11</failBuildOnCVSS>
+                    <!-- Declared here so every invocation (local Docker script,
+                         nightly CI) applies the same documented risk file. -->
+                    <suppressionFiles>
+                        <suppressionFile>dependency-check-suppressions.xml</suppressionFile>
+                    </suppressionFiles>
                     <!-- OSS Index now requires an account (401 anonymous);
                          NVD is the SCA source for this lab. -->
                     <ossindexAnalyzerEnabled>false</ossindexAnalyzerEnabled>
