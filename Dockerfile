@@ -17,8 +17,8 @@ RUN ./mvnw package -DskipTests -B
 # ---- Runtime stage ----
 FROM eclipse-temurin:21-jdk-alpine
 
-# Security: run as non-root user
-RUN groupadd -r spring && useradd -r -g spring spring
+# Security: run as non-root user (Alpine busybox syntax)
+RUN addgroup -S spring && adduser -S -G spring spring
 USER spring:spring
 
 WORKDIR /app
@@ -29,8 +29,8 @@ COPY --from=builder /app/target/*.jar app.jar
 # Optional: expose actuator / app port
 EXPOSE 8080
 
-# Health check (adjust path if needed)
+# Health check (busybox wget: curl is not present in this base image)
 HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
-  CMD curl -f http://localhost:8080/actuator/health || exit 1
+  CMD wget -q -O /dev/null http://localhost:8080/actuator/health || exit 1
 
 ENTRYPOINT ["java", "-XX:+UseContainerSupport", "-XX:MaxRAMPercentage=75.0", "-jar", "app.jar"]
