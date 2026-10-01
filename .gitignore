@@ -6,3 +6,5 @@ target/
 
 # Evidencias locales del TP (reportes pesados; se capturan para el PDF, no se versionan)
 evidencias/
+__pycache__/
+*.pyc
