@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Run OWASP Dependency-Check in Docker via the same Maven plugin version
-# declared in pom.xml (org.owasp:dependency-check-maven:11.1.1).
+# declared in pom.xml (org.owasp:dependency-check-maven:12.1.3).
 # Copies HTML + JSON reports to evidencias/local/dependency-check/.
 #
 # Requires the NVD_API_KEY environment variable: without a key the NVD
@@ -33,10 +33,8 @@ docker run --rm \
   -v devsecops-maven-cache:/root/.m2/repository \
   -e NVD_API_KEY \
   maven:3.9-eclipse-temurin-21 \
-  mvn -B org.owasp:dependency-check-maven:11.1.1:check \
-    -DnvdApiKey="${NVD_API_KEY}" \
-    -DfailBuildOnCVSS=11 \
-    -Dformat='HTML,JSON'
+  mvn -B org.owasp:dependency-check-maven:12.1.3:check \
+    -DnvdApiKey="${NVD_API_KEY}"
 
 for report in dependency-check-report.html dependency-check-report.json; do
   if [[ -f "target/${report}" ]]; then

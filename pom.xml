@@ -88,9 +88,21 @@
             <plugin>
                 <groupId>org.owasp</groupId>
                 <artifactId>dependency-check-maven</artifactId>
-                <version>11.1.1</version>
+                <version>12.1.3</version>
                 <configuration>
-                    <failBuildOnCVSS>7</failBuildOnCVSS>
+                    <!-- 'formats' (list) overrides 'format' (single); the CLI
+                         -Dformat only accepts one template name. -->
+                    <formats>
+                        <format>HTML</format>
+                        <format>JSON</format>
+                    </formats>
+                    <!-- 11 = the plugin never fails on CVSS: the quality gate
+                         reads the JSON report and decides (scanner reports,
+                         gate decides). -->
+                    <failBuildOnCVSS>11</failBuildOnCVSS>
+                    <!-- OSS Index now requires an account (401 anonymous);
+                         NVD is the SCA source for this lab. -->
+                    <ossindexAnalyzerEnabled>false</ossindexAnalyzerEnabled>
                 </configuration>
             </plugin>
             <!-- SpotBugs -->
