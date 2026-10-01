@@ -22,6 +22,9 @@
         <!-- Latest Tomcat 10.1.x patch: clears embedded-container CVEs
              flagged by dependency-check in the managed 10.1.55. -->
         <tomcat.version>10.1.60</tomcat.version>
+        <!-- Jackson patch bump: clears the HIGH CVEs Trivy finds in the
+             container image (jackson-databind 2.21.4 -> 2.21.7). -->
+        <jackson-bom.version>2.21.7</jackson-bom.version>
     </properties>
 
     <dependencies>
