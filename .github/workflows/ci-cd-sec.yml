@@ -183,6 +183,7 @@ jobs:
 
     outputs:
       image-digest: ${{ steps.push.outputs.digest }}
+      image-name: ${{ steps.image.outputs.name }}
       image-tags: ${{ steps.meta.outputs.tags }}
 
     steps:
@@ -199,11 +200,17 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Normalize image name to lowercase
+        # Container registries and image references require lowercase;
+        # github.repository keeps the owner case (FranklinF25).
+        id: image
+        run: echo "name=${IMAGE_NAME,,}" >> "$GITHUB_OUTPUT"
+
       - name: Extract metadata (tags, labels)
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          images: ${{ env.REGISTRY }}/${{ steps.image.outputs.name }}
           tags: |
             type=sha,prefix=sha-
             type=ref,event=branch
@@ -289,7 +296,7 @@ jobs:
       - name: Deploy to staging
         run: |
           # Update image tag in deployment (simple sed example)
-          sed -i "s|image:.*|image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${{ needs.docker-build-scan-push.outputs.image-digest }}|" k8s/staging/deployment.yaml
+          sed -i "s|image:.*|image: ${{ env.REGISTRY }}/${{ needs.docker-build-scan-push.outputs.image-name }}@${{ needs.docker-build-scan-push.outputs.image-digest }}|" k8s/staging/deployment.yaml
           kubectl apply -f k8s/staging/
           kubectl rollout status deployment/your-app -n staging --timeout=120s
 
@@ -316,6 +323,6 @@ jobs:
           echo "${{ secrets.KUBE_CONFIG_PROD }}" | base64 -d > "$HOME/.kube/config"
       - name: Deploy to production
         run: |
-          sed -i "s|image:.*|image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${{ needs.docker-build-scan-push.outputs.image-digest }}|" k8s/production/deployment.yaml
+          sed -i "s|image:.*|image: ${{ env.REGISTRY }}/${{ needs.docker-build-scan-push.outputs.image-name }}@${{ needs.docker-build-scan-push.outputs.image-digest }}|" k8s/production/deployment.yaml
           kubectl apply -f k8s/production/
           kubectl rollout status deployment/your-app -n production --timeout=180s
