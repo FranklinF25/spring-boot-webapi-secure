@@ -232,7 +232,9 @@ jobs:
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@v0.36.0
         with:
-          image-ref: ${{ steps.meta.outputs.tags }}
+          # meta.outputs.tags is a multi-line string (main, latest, sha-...);
+          # image-ref must be exactly one reference.
+          image-ref: ${{ fromJSON(steps.meta.outputs.json).tags[0] }}
           format: 'sarif'
           output: 'trivy-results.sarif'
           severity: 'CRITICAL,HIGH'
