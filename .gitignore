@@ -8,3 +8,6 @@ target/
 evidencias/
 __pycache__/
 *.pyc
+
+# Lab reports (guias-devsecops-local)
+reports/
