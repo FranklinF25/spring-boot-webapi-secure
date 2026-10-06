@@ -25,6 +25,9 @@
         <!-- Jackson patch bump: clears the HIGH CVEs Trivy finds in the
              container image (jackson-databind 2.21.4 -> 2.21.7). -->
         <jackson-bom.version>2.21.7</jackson-bom.version>
+        <!-- Lab 4 (guias-devsecops-local): clears CVE-2026-49844 in
+             log4j-api (Trivy: fixed in 2.25.5/2.26.1). -->
+        <log4j2.version>2.26.1</log4j2.version>
     </properties>
 
     <dependencies>
